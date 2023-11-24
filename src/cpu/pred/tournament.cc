@@ -354,5 +354,46 @@ int
 TournamentBP::BPHistory::newCount = 0;
 #endif
 
+
+
+int
+TournamentBP::get_branch_confidence(ThreadID tid, Addr branch_addr)
+{
+    bool local_prediction;
+    unsigned local_history_idx;
+    unsigned local_predictor_idx;
+    unsigned global_prediction_condifence;
+    unsigned normalized_mask;
+    bool choice_prediction;
+
+    //Lookup in the local predictor to get its branch prediction
+
+    //
+    local_history_idx = calcLocHistIdx(branch_addr);
+    //Lookup branch in history table use mask to mimic the size of the branch predictor
+    local_predictor_idx = localHistoryTable[local_history_idx]
+        & localPredictorMask;
+
+    //Lookup in the global predictor
+    global_prediction_condifence = globalCtrs[globalHistory[tid] & globalHistoryMask];
+
+    //Lookup in the choice predictor to see which one to use, we will look at confidence of predictor used
+    choice_prediction = choiceThreshold <
+      choiceCtrs[globalHistory[tid] & choiceHistoryMask];
+    
+    
+    if(choice_prediction == true){
+        //Global prediction was used
+        return (int)global_prediction_condifence;
+    } else {
+        //Local prediction was used
+        return (int)local_prediction_condifence;
+
+    }
+
+
+    
+}
+
 } // namespace branch_prediction
 } // namespace gem5

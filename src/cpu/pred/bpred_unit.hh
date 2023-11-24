@@ -136,7 +136,8 @@ class BPredUnit : public SimObject
      * @return Whether the branch is taken or not taken.
      */
     virtual bool lookup(ThreadID tid, Addr instPC, void * &bp_history) = 0;
-
+    virtual int get_branch_confidence(ThreadID tid, Addr instPC) = 0;
+   
      /**
      * If a branch is not taken, because the BTB address is invalid or missing,
      * this function sets the appropriate counter in the global and local

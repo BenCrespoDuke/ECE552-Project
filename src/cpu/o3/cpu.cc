@@ -1459,5 +1459,16 @@ CPU::htmSendAbortSignal(ThreadID tid, uint64_t htm_uid,
     }
 }
 
+CPU::high_confidence_branch(DynInstPtr inst){
+    const high_confidence_branch_threshold = 3;
+
+    int confidence = fetch->get_branch_confidence(inst->staticInst, inst->seqNum, inst->pc, inst->threadNumber);
+
+    if(confidence > high_confidence_branch_threshold){
+        return true;
+    }
+    return false;
+}
+
 } // namespace o3
 } // namespace gem5

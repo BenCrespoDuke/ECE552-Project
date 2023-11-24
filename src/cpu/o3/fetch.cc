@@ -1597,5 +1597,9 @@ Fetch::IcachePort::recvReqRetry()
     fetch->recvReqRetry();
 }
 
+int Fetch::get_branch_confidence(const StaticInstPtr &inst, const InstSeqNum &seqNum, PCStateBase &pc, ThreadID tid){
+    return branchPred->get_branch_confidence(tid, pc.instAddr());
+}
+
 } // namespace o3
 } // namespace gem5
