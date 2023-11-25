@@ -131,6 +131,8 @@ TAGE::uncondBranch(ThreadID tid, Addr br_pc, void* &bp_history)
     TageBranchInfo *bi = static_cast<TageBranchInfo*>(bp_history);
     tage->updateHistories(tid, br_pc, true, bi->tageBranchInfo, true);
 }
-
+int TAGE::get_branch_confidence(ThreadID tid, Addr instPC){
+    return 0;
+}
 } // namespace branch_prediction
 } // namespace gem5

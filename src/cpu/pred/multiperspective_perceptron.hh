@@ -53,6 +53,8 @@ namespace branch_prediction
 
 class MultiperspectivePerceptron : public BPredUnit
 {
+  public:
+    int get_branch_confidence(ThreadID tid, Addr instPC);
   protected:
     /**
      * Branch information data
@@ -116,7 +118,6 @@ class MultiperspectivePerceptron : public BPredUnit
         bool prediction;
         /** Score of the perceptron */
         int yout;
-
 
         MPPBranchInfo(Addr _pc, int pcshift, bool cb) : pc((unsigned int)_pc),
         pc2(pc >> 2), hpc(hashPC(pc, pcshift)), condBranch(cb),

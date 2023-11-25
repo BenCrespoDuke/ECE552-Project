@@ -540,10 +540,7 @@ BPredUnit::dump()
         }
     }
 }
-int 
-BPredUnit::get_branch_confidence(ThreadID tid, Addr instPC){
-    return 0;
-}
+
 
 } // namespace branch_prediction
 } // namespace gem5

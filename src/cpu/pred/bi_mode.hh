@@ -65,6 +65,7 @@ class BiModeBP : public BPredUnit
     void squash(ThreadID tid, void *bp_history);
     bool lookup(ThreadID tid, Addr branch_addr, void * &bp_history);
     void btbUpdate(ThreadID tid, Addr branch_addr, void * &bp_history);
+    int get_branch_confidence(ThreadID tid, Addr instPC);
     void update(ThreadID tid, Addr branch_addr, bool taken, void *bp_history,
                 bool squashed, const StaticInstPtr & inst, Addr corrTarget);
 

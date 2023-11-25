@@ -232,7 +232,9 @@ BiModeBP::updateGlobalHistReg(ThreadID tid, bool taken)
     globalHistoryReg[tid] &= historyRegisterMask;
 }
 
-
+int BiModeBP::get_branch_confidence(ThreadID tid, Addr instPC){
+    return 0;
+}
 
 
 } // namespace branch_prediction

@@ -828,6 +828,9 @@ MultiperspectivePerceptron::squash(ThreadID tid, void *bp_history)
     MPPBranchInfo *bi = static_cast<MPPBranchInfo*>(bp_history);
     delete bi;
 }
+int MultiperspectivePerceptron::get_branch_confidence(ThreadID tid, Addr instPC){
+    return 0;
+}
 
 } // namespace branch_prediction
 } // namespace gem5

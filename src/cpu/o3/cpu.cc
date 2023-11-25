@@ -1463,8 +1463,8 @@ bool CPU::high_confidence_branch(DynInstPtr inst){
     const int high_confidence_branch_threshold = 3;
 
     int confidence = fetch.get_branch_confidence(inst->staticInst, inst->seqNum, *(inst->pc.get()), inst->threadNumber);
-
-    if(confidence > high_confidence_branch_threshold){
+   // std::cout << confidence << std::endl;
+    if(confidence >= high_confidence_branch_threshold){
         return true;
     }
     return false;

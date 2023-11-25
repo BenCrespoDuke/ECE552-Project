@@ -82,7 +82,6 @@ TournamentBP::TournamentBP(const TournamentBPParams &params)
     if (!isPowerOf2(localHistoryTableSize)) {
         fatal("Invalid local history table size!\n");
     }
-
     //Setup the history table for the local table
     localHistoryTable.resize(localHistoryTableSize);
 
@@ -384,10 +383,10 @@ TournamentBP::get_branch_confidence(ThreadID tid, Addr branch_addr)
     
     if(choice_prediction == true){
         //Global prediction was used
-        return (int)global_prediction_condifence;
+        return (int)(global_prediction_condifence &0xF);
     } else {
         //Local prediction was used
-        return (int)localCtrs[local_predictor_idx];
+        return (int)(localCtrs[local_predictor_idx]&0xF);
 
     }
 
