@@ -1460,7 +1460,7 @@ CPU::htmSendAbortSignal(ThreadID tid, uint64_t htm_uid,
 }
 
 bool CPU::high_confidence_branch(DynInstPtr inst){
-    const int high_confidence_branch_threshold = 3;
+    const int high_confidence_branch_threshold = 10;
 
     int confidence = fetch.get_branch_confidence(inst->staticInst, inst->seqNum, *(inst->pc.get()), inst->threadNumber);
    // std::cout << confidence << std::endl;
