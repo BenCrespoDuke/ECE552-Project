@@ -336,7 +336,7 @@ class Fetch
      */
     void tick();
 
-    int get_branch_confidence(const StaticInstPtr &inst, const InstSeqNum &seqNum, PCStateBase &pc, ThreadID tid)
+    int get_branch_confidence(const StaticInstPtr &inst, const InstSeqNum &seqNum, PCStateBase &pc, ThreadID tid);
 
     /** Checks all input signals and updates the status as necessary.
      *  @return: Returns if the status has changed due to input signals.

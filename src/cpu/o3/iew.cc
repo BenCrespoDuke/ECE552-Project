@@ -1259,9 +1259,11 @@ IEW::executeInsts()
             if (inst->mispredicted() && !loadNotExecuted) {
                 // Place code here to check wether this was a likely taken branch if so do special protetive squash
 
-               bool high_confidence_miss = _cpu->high_confidence_branch(inst);
+               bool high_confidence_miss = cpu->high_confidence_branch(inst);
 
-               if(high_confidence_miss)
+               if(high_confidence_miss){
+                    printf("High Confidence miss \n");
+               }
 
                 fetchRedirect[tid] = true;
 

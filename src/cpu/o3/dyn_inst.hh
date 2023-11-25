@@ -203,8 +203,7 @@ class DynInst : public ExecContext, public RefCounted
      */
     std::queue<InstResult> instResult;
 
-    /** PC state for this instruction. */
-    std::unique_ptr<PCStateBase> pc;
+  
 
     /** Values to be written to the destination misc. registers. */
     std::vector<RegVal> _destMiscRegVal;
@@ -239,6 +238,8 @@ class DynInst : public ExecContext, public RefCounted
   public:
     size_t numSrcs() const { return _numSrcs; }
     size_t numDests() const { return _numDests; }
+    /** PC state for this instruction. */
+    std::unique_ptr<PCStateBase> pc;
 
     // Returns the flattened register index of the idx'th destination
     // register.

@@ -387,7 +387,7 @@ TournamentBP::get_branch_confidence(ThreadID tid, Addr branch_addr)
         return (int)global_prediction_condifence;
     } else {
         //Local prediction was used
-        return (int)local_prediction_condifence;
+        return (int)localCtrs[local_predictor_idx];
 
     }
 

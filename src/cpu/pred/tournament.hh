@@ -79,7 +79,7 @@ class TournamentBP : public BPredUnit
      * @return Whether or not the branch is taken.
      */
     bool lookup(ThreadID tid, Addr branch_addr, void * &bp_history);
-    int get_branch_confidence(ThreadID tid, Addr instPC)
+    int get_branch_confidence(ThreadID tid, Addr instPC);
 
     /**
      * Records that there was an unconditional branch, and modifies
