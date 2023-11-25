@@ -29,7 +29,7 @@ system.mem_mode = 'timing'
 system.mem_ranges = [AddrRange('512MB')]
 
 # Create basic CPU
-system.cpu = DerivO3CPU()
+system.cpu = X86O3CPU()
 
 #Create L1 caches and connect to CPU
 system.cpu.icache = L1ICache(options)

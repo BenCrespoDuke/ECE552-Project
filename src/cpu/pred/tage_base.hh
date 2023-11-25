@@ -201,7 +201,6 @@ class TAGEBase : public SimObject
      * @param bank The partially tagged table to access.
      */
     virtual int gindex(ThreadID tid, Addr pc, int bank) const;
-
     /**
      * Utility function to shuffle the path history
      * depending on which tagged table we are accessing.

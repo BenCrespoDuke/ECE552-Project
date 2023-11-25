@@ -164,7 +164,6 @@ class LoopPredictor : public SimObject
      * @param way Way to be used
      */
     int finallindex(int lindex, int lowPcBits, int way) const;
-
     /**
      * Get a branch prediction from the loop
      * predictor.

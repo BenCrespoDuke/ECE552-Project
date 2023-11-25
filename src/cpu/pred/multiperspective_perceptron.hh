@@ -117,6 +117,7 @@ class MultiperspectivePerceptron : public BPredUnit
         /** Score of the perceptron */
         int yout;
 
+
         MPPBranchInfo(Addr _pc, int pcshift, bool cb) : pc((unsigned int)_pc),
         pc2(pc >> 2), hpc(hashPC(pc, pcshift)), condBranch(cb),
         filtered(false), prediction(false), yout(0)

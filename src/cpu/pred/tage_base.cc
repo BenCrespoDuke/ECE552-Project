@@ -805,5 +805,7 @@ TAGEBase::getSizeInBits() const {
     return bits;
 }
 
+
+
 } // namespace branch_prediction
 } // namespace gem5

@@ -232,5 +232,8 @@ BiModeBP::updateGlobalHistReg(ThreadID tid, bool taken)
     globalHistoryReg[tid] &= historyRegisterMask;
 }
 
+
+
+
 } // namespace branch_prediction
 } // namespace gem5
