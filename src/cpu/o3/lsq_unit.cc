@@ -175,8 +175,13 @@ LSQUnit::completeDataAccess(PacketPtr pkt)
                 request->mainPacket()->setHtmTransactionFailedInCache(
                     pkt->getHtmTransactionFailedInCacheRC() );
             }
+            
+            //writeback(inst, request->mainPacket());
 
-            writeback(inst, request->mainPacket());
+            WritebackEvent *wb = new WritebackEvent(inst, request->mainPacket(),this);
+
+                cpu->schedule(wb, curTick()+300);
+
             if (inst->isStore() || inst->isAtomic()) {
                 request->writebackDone();
                 completeStore(request->instruction()->sqIt);
