@@ -56,11 +56,11 @@ char res;
 int main(int argc, char* argv[]) {
     printf("Hello World!\n");
     printf("%p \n",A);
-    printf("%p \n",secret);
     char data_found = attack(secret);
    printf("Seceret Found: %c \n", data_found);
+   printf("%p \n", &B[4608]);
 
-    data_found = attack(secret+1);
+   /* data_found = attack(secret+1);
     printf("Seceret Found: %c \n", data_found);
 
     data_found = attack(secret+2);

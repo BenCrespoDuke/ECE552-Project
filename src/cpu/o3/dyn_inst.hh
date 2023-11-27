@@ -334,7 +334,7 @@ class DynInst : public ExecContext, public RefCounted
     /////////////////////// Load Store Data //////////////////////
     /** The effective virtual address (lds & stores only). */
     Addr effAddr = 0;
-
+    Addr getEffAddr(void){ return effAddr;}
     /** The effective physical address. */
     Addr physEffAddr = 0;
 

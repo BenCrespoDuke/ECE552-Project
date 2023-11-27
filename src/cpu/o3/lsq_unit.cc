@@ -175,12 +175,17 @@ LSQUnit::completeDataAccess(PacketPtr pkt)
                 request->mainPacket()->setHtmTransactionFailedInCache(
                     pkt->getHtmTransactionFailedInCacheRC() );
             }
+            PacketPtr new_pkt = new Packet(*request->mainPacket());
+            Addr new_pkt_addr = inst->getEffAddr();
             
-            //writeback(inst, request->mainPacket());
-
-            WritebackEvent *wb = new WritebackEvent(inst, request->mainPacket(),this);
-
-                cpu->schedule(wb, curTick()+300);
+            //Check buffer object here to see if addresses align
+            if(new_pkt_addr == 0x4c8520  && inst->isLoad()){
+                std::cout << "We here" << std::endl;
+                WritebackEvent *wb = new WritebackEvent(inst, new_pkt,this);
+                cpu->schedule(wb, curTick()+60200);
+            } else {
+                writeback(inst, request->mainPacket());
+            }
 
             if (inst->isStore() || inst->isAtomic()) {
                 request->writebackDone();
