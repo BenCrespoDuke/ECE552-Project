@@ -832,6 +832,14 @@ Commit::commit()
                 if (toIEW->commitInfo[tid].mispredictInst->isUncondCtrl()) {
                      toIEW->commitInfo[tid].branchTaken = true;
                 }
+                if (toIEW->commitInfo[tid].squashInst->isLoad()) {
+                    if (!fromIEW->branchHighConfidenceTaken[tid]) {
+                        //@TODO: compare address of this load with the addresses already in the buffer to see which ones to move to L3
+                    }
+                    else {
+                        //@TODO: store address into poison buffer
+                    }
+                }
                 ++stats.branchMispredicts;
             }
 
