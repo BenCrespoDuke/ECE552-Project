@@ -182,7 +182,7 @@ LSQUnit::completeDataAccess(PacketPtr pkt)
             if(new_pkt_addr == 0x4c8520  && inst->isLoad()){
                 std::cout << "We here" << std::endl;
                 WritebackEvent *wb = new WritebackEvent(inst, new_pkt,this);
-                cpu->schedule(wb, curTick()+60200);
+                cpu->schedule(wb, curTick()+90200);
             } else {
                 writeback(inst, request->mainPacket());
             }

