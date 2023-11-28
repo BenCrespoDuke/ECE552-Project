@@ -57,6 +57,7 @@
 #include "debug/IEW.hh"
 #include "debug/O3PipeView.hh"
 #include "params/BaseO3CPU.hh"
+#define PROTECTIVE_ADDR_BUFF_MAX_SIZE 20
 
 namespace gem5
 {
@@ -412,7 +413,7 @@ IEW::squash(ThreadID tid)
 }
 
 void
-IEW::squashDueToBranch(const DynInstPtr& inst, ThreadID ti, bool highConfidenceMiss)
+IEW::squashDueToBranch(const DynInstPtr& inst, ThreadID tid, bool highConfidenceMiss)
 {
     DPRINTF(IEW, "[tid:%i] [sn:%llu] Squashing from a specific instruction,"
             " PC: %s "
@@ -1588,6 +1589,35 @@ IEW::checkMisprediction(const DynInstPtr& inst)
             }
         }
     }
+}
+
+void
+IEW::pushAddrOnProtectiveBuff(Addr addr){
+    protectiveAddrQueue.push_back(addr);
+    if(protectiveAddrQueue.size() > PROTECTIVE_ADDR_BUFF_MAX_SIZE){
+        protectiveAddrQueue.pop_front();
+    }
+}
+
+bool
+IEW::removeAddrFromBuffIfPresent(Addr addr){
+    uint64_t before_size = protectiveAddrQueue.size();
+    protectiveAddrQueue.remove(addr);
+    uint64_t after_size = protectiveAddrQueue.size();
+    if(after_size != before_size){
+        return true;
+    }
+    return false;
+}
+
+bool 
+IEW::checkProtectiveBuffForAddr(Addr addr){
+    for (std::list<Addr>::iterator it=protectiveAddrQueue.begin(); it != protectiveAddrQueue.end(); ++it){
+        if(*it == addr){
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace o3

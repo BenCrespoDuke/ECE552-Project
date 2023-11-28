@@ -356,7 +356,12 @@ class IEW
 
     /** Load / store queue. */
     LSQ ldstQueue;
-
+    /** Protective Adress Buffer*/
+    
+    std::list<Addr> protectiveAddrQueue;
+    void pushAddrOnProtectiveBuff(Addr addr);
+    bool removeAddrFromBuffIfPresent(Addr addr);
+    bool checkProtectiveBuffForAddr(Addr addr);
     /** Pointer to the functional unit pool. */
     FUPool *fuPool;
     /** Records if the LSQ needs to be updated on the next cycle, so that
