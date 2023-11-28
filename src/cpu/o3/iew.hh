@@ -240,7 +240,7 @@ class IEW
     /** Sends commit proper information for a squash due to a branch
      * mispredict.
      */
-    void squashDueToBranch(const DynInstPtr &inst, ThreadID tid);
+    void squashDueToBranch(const DynInstPtr &inst, ThreadID tid, bool highConfidenceMiss);
 
     /** Sends commit proper information for a squash due to a memory order
      * violation.

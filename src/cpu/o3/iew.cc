@@ -412,7 +412,7 @@ IEW::squash(ThreadID tid)
 }
 
 void
-IEW::squashDueToBranch(const DynInstPtr& inst, ThreadID tid)
+IEW::squashDueToBranch(const DynInstPtr& inst, ThreadID ti, bool highConfidenceMiss)
 {
     DPRINTF(IEW, "[tid:%i] [sn:%llu] Squashing from a specific instruction,"
             " PC: %s "
@@ -429,10 +429,10 @@ IEW::squashDueToBranch(const DynInstPtr& inst, ThreadID tid)
 
         toCommit->mispredictInst[tid] = inst;
         toCommit->includeSquashInst[tid] = false;
+        toCommit->branchHighConfidenceTaken[tid] = highConfidenceMiss;
 
         wroteToTimeBuffer = true;
     }
-
 }
 
 void
@@ -1276,8 +1276,8 @@ IEW::executeInsts()
                 DPRINTF(IEW, "[tid:%i] [sn:%llu] Execute: "
                         "Redirecting fetch to PC: %s\n",
                         tid, inst->seqNum, inst->pcState());
-                // If incorrect, then signal the ROB that it must be squashed.
-                squashDueToBranch(inst, tid);
+                // If incorrect, then signal the ROB that it must be squashed. (@TODO: see how instructions enter here for the squash)
+                squashDueToBranch(inst, tid, high_confidence_miss);
 
                 ppMispredict->notify(inst);
 
@@ -1579,7 +1579,7 @@ IEW::checkMisprediction(const DynInstPtr& inst)
                     "Redirecting fetch to PC: %s\n",
                     tid, inst->seqNum, inst->pcState());
             // If incorrect, then signal the ROB that it must be squashed.
-            squashDueToBranch(inst, tid);
+            squashDueToBranch(inst, tid, cpu->high_confidence_branch(inst));
 
             if (inst->readPredTaken()) {
                 iewStats.predictedTakenIncorrect++;
