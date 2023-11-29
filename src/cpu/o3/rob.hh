@@ -98,7 +98,7 @@ class ROB
 
     std::string name() const;
 
-    std::list<DynInstPtr> getSpeculativeLoads();
+    std::list<DynInstPtr> getSpeculativeLoads(ThreadID tid);
 
     /** Sets pointer to the list of active threads.
      *  @param at_ptr Pointer to the list of active threads.

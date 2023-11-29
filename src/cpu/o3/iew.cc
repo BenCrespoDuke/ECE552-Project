@@ -430,7 +430,7 @@ IEW::squashDueToBranch(const DynInstPtr& inst, ThreadID tid, bool highConfidence
 
         toCommit->mispredictInst[tid] = inst;
         toCommit->includeSquashInst[tid] = false;
-        toCommit->branchHighConfidence[tid] = high_confidence_miss;
+        toCommit->branchHighConfidence[tid] = highConfidenceMiss;
         wroteToTimeBuffer = true;
     }
 }

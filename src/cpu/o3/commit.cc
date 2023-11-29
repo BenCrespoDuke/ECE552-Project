@@ -813,7 +813,7 @@ Commit::commit()
 
             rob->squash(squashed_inst, tid);
             if (fromIEW->branchHighConfidence[tid]) {
-                for (DynInstPtr inst : rob->getSpeculativeLoads()) {
+                for (DynInstPtr inst : rob->getSpeculativeLoads(tid)) {
                     inst->isProtectiveSquash = true;
                 }
             }

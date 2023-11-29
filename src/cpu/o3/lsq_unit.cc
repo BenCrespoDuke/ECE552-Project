@@ -203,7 +203,9 @@ LSQUnit::completeDataAccess(PacketPtr pkt)
     } else {
         bool protectedSquash = false;
         // Check if this instruction was protectivly squashed
-
+        if(inst->isProtectiveSquash){
+             protectedSquash = true;
+        }
         //Add adrress to buffer if this is the case
         if(protectedSquash){
             iewStage->pushAddrOnProtectiveBuff(inst->getEffAddr());
