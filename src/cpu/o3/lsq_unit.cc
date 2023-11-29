@@ -179,7 +179,11 @@ LSQUnit::completeDataAccess(PacketPtr pkt)
             Addr new_pkt_addr = inst->getEffAddr();
             
             //Check buffer object here to see if addresses align
-            if(new_pkt_addr == 0x4c8520  && inst->isLoad()){
+            bool protectedLoad = false;
+            if(inst->isLoad()){
+                protectedLoad = iewStage->removeAddrFromBuffIfPresent(new_pkt_addr);
+            }
+            if(protectedLoad){
                 std::cout << "We here" << std::endl;
                 WritebackEvent *wb = new WritebackEvent(inst, new_pkt,this);
                 cpu->schedule(wb, curTick()+90200);
@@ -195,6 +199,14 @@ LSQUnit::completeDataAccess(PacketPtr pkt)
             // This is a regular store (i.e., not store conditionals and
             // atomics), so it can complete without writing back
             completeStore(request->instruction()->sqIt);
+        }
+    } else {
+        bool protectedSquash = false;
+        // Check if this instruction was protectivly squashed
+
+        //Add adrress to buffer if this is the case
+        if(protectedSquash){
+            iewStage->pushAddrOnProtectiveBuff(inst->getEffAddr());
         }
     }
 }

@@ -104,7 +104,7 @@ IEW::IEW(CPU *_cpu, const BaseO3CPUParams &params)
 
     // Instruction queue needs the queue between issue and execute.
     instQueue.setIssueToExecuteQueue(&issueToExecQueue);
-
+    
     for (ThreadID tid = 0; tid < MaxThreads; tid++) {
         dispatchStatus[tid] = Running;
         fetchRedirect[tid] = false;
