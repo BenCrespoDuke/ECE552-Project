@@ -98,6 +98,8 @@ class ROB
 
     std::string name() const;
 
+    std::list<DynInstPtr> getSpeculativeLoads();
+
     /** Sets pointer to the list of active threads.
      *  @param at_ptr Pointer to the list of active threads.
      */
@@ -287,6 +289,8 @@ class ROB
 
     /** ROB List of Instructions */
     std::list<DynInstPtr> instList[MaxThreads];
+
+    std::list<DynInstPtr> speculativeLoads[MaxThreads];
 
     /** Number of instructions that can be squashed in a single cycle. */
     unsigned squashWidth;

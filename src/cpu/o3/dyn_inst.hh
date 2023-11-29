@@ -203,7 +203,7 @@ class DynInst : public ExecContext, public RefCounted
      */
     std::queue<InstResult> instResult;
 
-  
+
 
     /** Values to be written to the destination misc. registers. */
     std::vector<RegVal> _destMiscRegVal;
@@ -337,6 +337,7 @@ class DynInst : public ExecContext, public RefCounted
     Addr getEffAddr(void){ return effAddr;}
     /** The effective physical address. */
     Addr physEffAddr = 0;
+    bool isProtectiveSquash;
 
     /** The memory request flags (from translation). */
     unsigned memReqFlags = 0;
