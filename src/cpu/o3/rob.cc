@@ -350,7 +350,9 @@ ROB::doSquash(ThreadID tid)
         // Mark the instruction as squashed, and ready to commit so that
         // it can drain out of the pipeline.
         (*squashIt[tid])->setSquashed();
-
+        if (squashIt[tid]->isLoad()) {
+            speculativeLoads.push_back(squashIt[tid]);
+        }
         (*squashIt[tid])->setCanCommit();
 
 
@@ -539,6 +541,10 @@ ROB::findInst(ThreadID tid, InstSeqNum squash_inst)
         }
     }
     return NULL;
+}
+
+std::list<DynInstPtr> ROB::getSpeculativeLoads() {
+    return speculativeLoads;
 }
 
 } // namespace o3

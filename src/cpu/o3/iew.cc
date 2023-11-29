@@ -430,8 +430,7 @@ IEW::squashDueToBranch(const DynInstPtr& inst, ThreadID tid, bool highConfidence
 
         toCommit->mispredictInst[tid] = inst;
         toCommit->includeSquashInst[tid] = false;
-        toCommit->branchHighConfidenceTaken[tid] = highConfidenceMiss;
-
+        toCommit->branchHighConfidence[tid] = high_confidence_miss;
         wroteToTimeBuffer = true;
     }
 }
@@ -1262,9 +1261,9 @@ IEW::executeInsts()
 
                bool high_confidence_miss = cpu->high_confidence_branch(inst);
 
-               if(high_confidence_miss){
-                     std::cout << "High Confidence Miss" << std::endl;
-               }
+            //    if (high_confidence_miss){
+            //          std::cout << "High Confidence Miss" << std::endl;
+            //    }
 
                 fetchRedirect[tid] = true;
 
@@ -1277,7 +1276,7 @@ IEW::executeInsts()
                 DPRINTF(IEW, "[tid:%i] [sn:%llu] Execute: "
                         "Redirecting fetch to PC: %s\n",
                         tid, inst->seqNum, inst->pcState());
-                // If incorrect, then signal the ROB that it must be squashed. (@TODO: see how instructions enter here for the squash)
+                // If incorrect, then signal the ROB that it must be squashed.
                 squashDueToBranch(inst, tid, high_confidence_miss);
 
                 ppMispredict->notify(inst);
@@ -1610,7 +1609,7 @@ IEW::removeAddrFromBuffIfPresent(Addr addr){
     return false;
 }
 
-bool 
+bool
 IEW::checkProtectiveBuffForAddr(Addr addr){
     for (std::list<Addr>::iterator it=protectiveAddrQueue.begin(); it != protectiveAddrQueue.end(); ++it){
         if(*it == addr){
