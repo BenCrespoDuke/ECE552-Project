@@ -57,7 +57,7 @@
 #include "debug/IEW.hh"
 #include "debug/O3PipeView.hh"
 #include "params/BaseO3CPU.hh"
-#define PROTECTIVE_ADDR_BUFF_MAX_SIZE 20
+#define PROTECTIVE_ADDR_BUFF_MAX_SIZE 25
 
 namespace gem5
 {
@@ -1259,11 +1259,11 @@ IEW::executeInsts()
             if (inst->mispredicted() && !loadNotExecuted) {
                 // Place code here to check wether this was a likely taken branch if so do special protetive squash
 
-               bool high_confidence_miss = cpu->high_confidence_branch(inst);
+                bool high_confidence_miss = cpu->high_confidence_branch(inst);
 
-            //    if (high_confidence_miss){
-            //          std::cout << "High Confidence Miss" << std::endl;
-            //    }
+                if (high_confidence_miss){
+                      std::cout << "High Confidence Miss" << std::endl;
+                }
 
                 fetchRedirect[tid] = true;
 
@@ -1287,6 +1287,7 @@ IEW::executeInsts()
                     iewStats.predictedNotTakenIncorrect++;
                 }
             } else if (ldstQueue.violation(tid)) {
+                
                 assert(inst->isMemRef());
                 // If there was an ordering violation, then get the
                 // DynInst that caused the violation.  Note that this
@@ -1591,18 +1592,22 @@ IEW::checkMisprediction(const DynInstPtr& inst)
 }
 
 void
-IEW::pushAddrOnProtectiveBuff(Addr addr){
-    protectiveAddrQueue.push_back(addr);
-    if(protectiveAddrQueue.size() > PROTECTIVE_ADDR_BUFF_MAX_SIZE){
-        protectiveAddrQueue.pop_front();
+IEW::pushAddrOnProtectiveBuff(Addr addr, ThreadID tid){
+            
+    if(addr ==  0x4c8520){
+        std::cout << "Saw Target added to buffer" << std::endl;
+    }
+    protectiveAddrQueue[tid].push_back(addr);
+    if(protectiveAddrQueue[tid].size() > PROTECTIVE_ADDR_BUFF_MAX_SIZE){
+        protectiveAddrQueue[tid].pop_front();
     }
 }
 
 bool
-IEW::removeAddrFromBuffIfPresent(Addr addr){
-    uint64_t before_size = protectiveAddrQueue.size();
-    protectiveAddrQueue.remove(addr);
-    uint64_t after_size = protectiveAddrQueue.size();
+IEW::removeAddrFromBuffIfPresent(Addr addr, ThreadID tid){
+    uint64_t before_size = protectiveAddrQueue[tid].size();
+    protectiveAddrQueue[tid].remove(addr);
+    uint64_t after_size = protectiveAddrQueue[tid].size();
     if(after_size != before_size){
         return true;
     }
@@ -1610,8 +1615,8 @@ IEW::removeAddrFromBuffIfPresent(Addr addr){
 }
 
 bool
-IEW::checkProtectiveBuffForAddr(Addr addr){
-    for (std::list<Addr>::iterator it=protectiveAddrQueue.begin(); it != protectiveAddrQueue.end(); ++it){
+IEW::checkProtectiveBuffForAddr(Addr addr, ThreadID tid){
+    for (std::list<Addr>::iterator it=protectiveAddrQueue[tid].begin(); it != protectiveAddrQueue[tid].end(); ++it){
         if(*it == addr){
             return true;
         }

@@ -292,6 +292,7 @@ Commit::clearStates(ThreadID tid)
     committedStores[tid] = false;
     trapSquash[tid] = false;
     tcSquash[tid] = false;
+    doingProtectiveSquash[tid] = false;
     pc[tid].reset(cpu->tcBase(tid)->getIsaPtr()->newPCState());
     lastCommitedSeqNum[tid] = 0;
     squashAfterInst[tid] = NULL;
@@ -355,6 +356,7 @@ Commit::takeOverFrom()
     _nextStatus = Inactive;
     for (ThreadID tid = 0; tid < numThreads; tid++) {
         commitStatus[tid] = Idle;
+        doingProtectiveSquash[tid] = false;
         changedROBNumEntries[tid] = false;
         trapSquash[tid] = false;
         tcSquash[tid] = false;
@@ -602,10 +604,47 @@ Commit::tick()
 
             if (rob->isDoneSquashing(tid)) {
                 commitStatus[tid] = Running;
+                if (doingProtectiveSquash[tid]) {
+                 std::cout << "Protective Squash" << std::endl;
+                for (DynInstPtr inst : rob->getSpeculativeLoads(tid)) {
+                    inst->isProtectiveSquash = true;
+                    if(inst->getEffAddr()  == 0x498004){
+                         std::cout << "Saw Target in commit during squash" << std::endl;
+                    }
+                    if(inst->getEffAddr()  == 0x4c8520){
+                         std::cout << "Saw Other Target in commit during squash" << std::endl;
+                    }
+                    if(inst->effAddrValid() && !(iewStage->checkProtectiveBuffForAddr(inst->getEffAddr(), tid))){
+
+                        iewStage->pushAddrOnProtectiveBuff(inst->getEffAddr(),tid);
+                        std::cout << inst->getEffAddr()<< std::endl;
+                    }
+                }
+                }
+                doingProtectiveSquash[tid] = false;
+                 while(rob->speculativeLoads[tid].size()!= 0){
+                    rob->speculativeLoads[tid].pop_back();
+                }
+                std::cout << "Squash complete" << std::endl;
             } else {
                 DPRINTF(Commit,"[tid:%i] Still Squashing, cannot commit any"
                         " insts this cycle.\n", tid);
                 rob->doSquash(tid);
+               /*if (doingProtectiveSquash[tid]) { 
+                 std::cout << "Protective Squash" << std::endl;
+                for (DynInstPtr inst : rob->getSpeculativeLoads(tid)) {
+                    inst->isProtectiveSquash = true;
+                    if(inst->getEffAddr()==  0x4c8520){
+                         std::cout << "Saw Target in commit during squash tick" << std::endl;
+                    }
+                    if(inst->isExecuted() != 0 && !(iewStage->checkProtectiveBuffForAddr(inst->getEffAddr()))){
+
+                        iewStage->pushAddrOnProtectiveBuff(inst->getEffAddr());
+                        std::cout << inst->getEffAddr()<< std::endl;
+                    }
+                }
+                
+            }*/
                 toIEW->commitInfo[tid].robSquashing = true;
                 wroteToTimeBuffer = true;
             }
@@ -782,6 +821,7 @@ Commit::commit()
             fromIEW->squashedSeqNum[tid] <= youngestSeqNum[tid]) {
 
             if (fromIEW->mispredictInst[tid]) {
+                std::cout << "Branch mispredict squash" << std::endl;
                 DPRINTF(Commit,
                     "[tid:%i] Squashing due to branch mispred "
                     "PC:%#x [sn:%llu]\n",
@@ -789,6 +829,7 @@ Commit::commit()
                     fromIEW->mispredictInst[tid]->pcState().instAddr(),
                     fromIEW->squashedSeqNum[tid]);
             } else {
+                 std::cout << "Squashing due to mem order" << std::endl;
                 DPRINTF(Commit,
                     "[tid:%i] Squashing due to order violation [sn:%llu]\n",
                     tid, fromIEW->squashedSeqNum[tid]);
@@ -807,16 +848,41 @@ Commit::commit()
                 squashed_inst--;
             }
 
+            if(fromIEW->mispredictInst[tid] && fromIEW->branchHighConfidence[tid]){
+                doingProtectiveSquash[tid] = true;
+            }
             // All younger instructions will be squashed. Set the sequence
             // number as the youngest instruction in the ROB.
             youngestSeqNum[tid] = squashed_inst;
 
             rob->squash(squashed_inst, tid);
-            if (fromIEW->branchHighConfidence[tid]) {
+            /*if (doingProtectiveSquash[tid]) {
+                 std::cout << "Protective Squash" << std::endl;
                 for (DynInstPtr inst : rob->getSpeculativeLoads(tid)) {
                     inst->isProtectiveSquash = true;
+                    if(inst->getEffAddr()==  0x4c8520){
+                         std::cout << "Saw Target in commit during squash" << std::endl;
+                    }
+                    if(inst->isExecuted() != 0 && !(iewStage->checkProtectiveBuffForAddr(inst->getEffAddr()))){
+
+                        iewStage->pushAddrOnProtectiveBuff(inst->getEffAddr());
+                        std::cout << inst->getEffAddr()<< std::endl;
+                    }
                 }
+                
             }
+            else{
+                 for (DynInstPtr inst : rob->getSpeculativeLoads(tid)) {
+                if(inst->getEffAddr() ==  0x4c8520 ){
+                    std::cout << "Saw Target squash unprotected";
+                if(fromIEW->mispredictInst[tid]){
+                    std::cout << " it was on a branch mispredict" << std::endl;
+                }
+                }
+                 }
+            }*/
+        
+
             changedROBNumEntries[tid] = true;
 
             toIEW->commitInfo[tid].doneSeqNum = squashed_inst;
@@ -1174,7 +1240,7 @@ Commit::commitHead(const DynInstPtr &head_inst, unsigned inst_num)
         head_inst->setCompleted();
     }
 
-    if (inst_fault != NoFault) {
+    if (inst_fault != NoFault) {     
         DPRINTF(Commit, "Inst [tid:%i] [sn:%llu] PC %s has a fault\n",
                 tid, head_inst->seqNum, head_inst->pcState());
 

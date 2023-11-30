@@ -133,6 +133,7 @@ class Commit
   public:
     /** Construct a Commit with the given parameters. */
     Commit(CPU *_cpu, const BaseO3CPUParams &params);
+    bool doingProtectiveSquash[MaxThreads];
 
     /** Returns the name of the Commit. */
     std::string name() const;

@@ -88,6 +88,10 @@ TournamentBP::TournamentBP(const TournamentBPParams &params)
     for (int i = 0; i < localHistoryTableSize; ++i)
         localHistoryTable[i] = 0;
 
+    for (int i = 0; i < localPredictorSize; ++i)
+        for(int j = 0; j <7; j++)
+        localCtrs[i]++;
+
     // Set up the global history mask
     // this is equivalent to mask(log2(globalPredictorSize)
     globalHistoryMask = globalPredictorSize - 1;
@@ -118,7 +122,7 @@ TournamentBP::TournamentBP(const TournamentBPParams &params)
 
     // Set thresholds for the three predictors' counters
     // This is equivalent to (2^(Ctr))/2 - 1
-    localThreshold  = (1ULL << (localCtrBits  - 1)) - 1;
+    localThreshold  = 8;//(1ULL << (localCtrBits  - 1)) - 1;
     globalThreshold = (1ULL << (globalCtrBits - 1)) - 1;
     choiceThreshold = (1ULL << (choiceCtrBits - 1)) - 1;
 }
@@ -383,7 +387,8 @@ TournamentBP::get_branch_confidence(ThreadID tid, Addr branch_addr)
     
     if(choice_prediction == true){
         //Global prediction was used
-        return (int)(global_prediction_condifence &0xF);
+        //return (int)(global_prediction_condifence &0xF);
+        return (int)(localCtrs[local_predictor_idx]&0xF);
     } else {
         //Local prediction was used
         return (int)(localCtrs[local_predictor_idx]&0xF);

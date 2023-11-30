@@ -290,7 +290,7 @@ class ROB
     /** ROB List of Instructions */
     std::list<DynInstPtr> instList[MaxThreads];
 
-    std::list<DynInstPtr> speculativeLoads[MaxThreads];
+    
 
     /** Number of instructions that can be squashed in a single cycle. */
     unsigned squashWidth;
@@ -301,7 +301,7 @@ class ROB
      *  however it should never be incorrect.
      */
     InstIt tail;
-
+    std::list<DynInstPtr> speculativeLoads[MaxThreads];
     /** Iterator pointing to the instruction which is the first instruction in
      *  in the ROB*/
     InstIt head;

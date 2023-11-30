@@ -358,10 +358,10 @@ class IEW
     LSQ ldstQueue;
     /** Protective Adress Buffer*/
     
-    std::list<Addr> protectiveAddrQueue;
-    void pushAddrOnProtectiveBuff(Addr addr);
-    bool removeAddrFromBuffIfPresent(Addr addr);
-    bool checkProtectiveBuffForAddr(Addr addr);
+    std::list<Addr> protectiveAddrQueue[MaxThreads];
+    void pushAddrOnProtectiveBuff(Addr addr, ThreadID tid);
+    bool removeAddrFromBuffIfPresent(Addr addr, ThreadID tid);
+    bool checkProtectiveBuffForAddr(Addr addr, ThreadID tid);
     /** Pointer to the functional unit pool. */
     FUPool *fuPool;
     /** Records if the LSQ needs to be updated on the next cycle, so that

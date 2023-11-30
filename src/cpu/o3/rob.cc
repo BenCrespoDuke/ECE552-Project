@@ -350,8 +350,16 @@ ROB::doSquash(ThreadID tid)
         // Mark the instruction as squashed, and ready to commit so that
         // it can drain out of the pipeline.
         (*squashIt[tid])->setSquashed();
-        if ((*squashIt[tid])->isLoad()) {
+
+        if ((*squashIt[tid])->isLoad() || (*squashIt[tid])->isStore()) {
+             if((*squashIt[tid])->getEffAddr() == 0x498004){
+                         std::cout << "Saw Target in rob during squash" << std::endl;
+                    }
+            if((*squashIt[tid])->getEffAddr() == 0x4c8520){
+                         std::cout << "Saw Other Target in rob during squash" << std::endl;
+                    }
             (speculativeLoads[tid]).push_back(*squashIt[tid]);
+            
         }
         (*squashIt[tid])->setCanCommit();
 

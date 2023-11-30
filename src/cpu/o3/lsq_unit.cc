@@ -177,14 +177,19 @@ LSQUnit::completeDataAccess(PacketPtr pkt)
             }
             PacketPtr new_pkt = new Packet(*request->mainPacket());
             Addr new_pkt_addr = inst->getEffAddr();
-            
+            if(new_pkt_addr == 0x498004 ){
+                std::cout << "Saw Target" << std::endl;
+            }
             //Check buffer object here to see if addresses align
             bool protectedLoad = false;
             if(inst->isLoad()){
-                protectedLoad = iewStage->removeAddrFromBuffIfPresent(new_pkt_addr);
+                protectedLoad = iewStage->removeAddrFromBuffIfPresent(new_pkt_addr,inst->threadNumber);
             }
             if(protectedLoad){
-                std::cout << "We here" << std::endl;
+                if(new_pkt_addr == 0x498004 ){
+                std::cout << "Saw Target in crit section" << std::endl;
+            }
+                //std::cout << "We here" << std::endl;
                 WritebackEvent *wb = new WritebackEvent(inst, new_pkt,this);
                 cpu->schedule(wb, curTick()+90200);
             } else {
@@ -203,12 +208,14 @@ LSQUnit::completeDataAccess(PacketPtr pkt)
     } else {
         bool protectedSquash = false;
         // Check if this instruction was protectivly squashed
+        std::cout << inst->getEffAddr()<< std::endl;
         if(inst->isProtectiveSquash){
+            std::cout << "Adding to Buff: " << inst->getEffAddr() << std::endl;
              protectedSquash = true;
         }
         //Add adrress to buffer if this is the case
         if(protectedSquash){
-            iewStage->pushAddrOnProtectiveBuff(inst->getEffAddr());
+            iewStage->pushAddrOnProtectiveBuff(inst->getEffAddr(),inst->threadNumber);
         }
     }
 }
@@ -653,6 +660,9 @@ LSQUnit::executeLoad(const DynInstPtr &inst)
         // realizes there is activity.  Mark it as executed unless it
         // is a strictly ordered load that needs to hit the head of
         // commit.
+        if(inst->getEffAddr() == 0x498004){
+            std::cout << "Saw Target cause fault" << std::endl;
+        }
         if (!inst->readPredicate())
             inst->forwardOldRegs();
         DPRINTF(LSQUnit, "Load [sn:%lli] not executed from %s\n",
@@ -960,6 +970,13 @@ LSQUnit::squash(const InstSeqNum &squashed_num)
             stallingStoreIsn = 0;
             stallingLoadIdx = 0;
         }
+        if(loadQueue.back().instruction()->getEffAddr() == 0x498004){
+            std::cout << "Here's the fucking target bitch" << std::endl;
+        }
+        if(loadQueue.back().instruction()->getEffAddr() == 0x4c8520){
+            std::cout << "Here's the other fucking target bitch" << std::endl;
+        }
+        
 
         // hardware transactional memory
         // Squashing instructions can alter the transaction nesting depth
@@ -1103,6 +1120,9 @@ LSQUnit::writeback(const DynInstPtr &inst, PacketPtr pkt)
     if (inst->isSquashed()) {
         assert (!inst->isStore() || inst->isStoreConditional());
         ++stats.ignoredResponses;
+        if(inst->getEffAddr() == 0x498004){
+            std::cout << "Saw Target in Writeback" << std::endl;
+        }
         return;
     }
 
