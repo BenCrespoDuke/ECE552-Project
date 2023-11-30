@@ -353,10 +353,10 @@ ROB::doSquash(ThreadID tid)
 
         if ((*squashIt[tid])->isLoad() || (*squashIt[tid])->isStore()) {
              if((*squashIt[tid])->getEffAddr() == 0x498004){
-                         std::cout << "Saw Target in rob during squash" << std::endl;
+                        
                     }
             if((*squashIt[tid])->getEffAddr() == 0x4c8520){
-                         std::cout << "Saw Other Target in rob during squash" << std::endl;
+                         
                     }
             (speculativeLoads[tid]).push_back(*squashIt[tid]);
             

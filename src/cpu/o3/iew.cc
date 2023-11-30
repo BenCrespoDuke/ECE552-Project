@@ -1262,7 +1262,7 @@ IEW::executeInsts()
                 bool high_confidence_miss = cpu->high_confidence_branch(inst);
 
                 if (high_confidence_miss){
-                      std::cout << "High Confidence Miss" << std::endl;
+                     // std::cout << "High Confidence Miss" << std::endl;
                 }
 
                 fetchRedirect[tid] = true;

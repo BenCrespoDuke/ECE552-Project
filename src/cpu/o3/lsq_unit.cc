@@ -208,9 +208,9 @@ LSQUnit::completeDataAccess(PacketPtr pkt)
     } else {
         bool protectedSquash = false;
         // Check if this instruction was protectivly squashed
-        std::cout << inst->getEffAddr()<< std::endl;
+        //std::cout << inst->getEffAddr()<< std::endl;
         if(inst->isProtectiveSquash){
-            std::cout << "Adding to Buff: " << inst->getEffAddr() << std::endl;
+            //std::cout << "Adding to Buff: " << inst->getEffAddr() << std::endl;
              protectedSquash = true;
         }
         //Add adrress to buffer if this is the case
@@ -660,9 +660,7 @@ LSQUnit::executeLoad(const DynInstPtr &inst)
         // realizes there is activity.  Mark it as executed unless it
         // is a strictly ordered load that needs to hit the head of
         // commit.
-        if(inst->getEffAddr() == 0x498004){
-            std::cout << "Saw Target cause fault" << std::endl;
-        }
+        
         if (!inst->readPredicate())
             inst->forwardOldRegs();
         DPRINTF(LSQUnit, "Load [sn:%lli] not executed from %s\n",
@@ -971,10 +969,10 @@ LSQUnit::squash(const InstSeqNum &squashed_num)
             stallingLoadIdx = 0;
         }
         if(loadQueue.back().instruction()->getEffAddr() == 0x498004){
-            std::cout << "Here's the fucking target bitch" << std::endl;
+            //std::cout << "Here's the fucking target bitch" << std::endl;
         }
         if(loadQueue.back().instruction()->getEffAddr() == 0x4c8520){
-            std::cout << "Here's the other fucking target bitch" << std::endl;
+            //std::cout << "Here's the other fucking target bitch" << std::endl;
         }
         
 

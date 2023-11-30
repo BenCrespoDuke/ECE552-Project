@@ -605,7 +605,7 @@ Commit::tick()
             if (rob->isDoneSquashing(tid)) {
                 commitStatus[tid] = Running;
                 if (doingProtectiveSquash[tid]) {
-                 std::cout << "Protective Squash" << std::endl;
+            
                 for (DynInstPtr inst : rob->getSpeculativeLoads(tid)) {
                     inst->isProtectiveSquash = true;
                     if(inst->getEffAddr()  == 0x498004){
@@ -617,7 +617,7 @@ Commit::tick()
                     if(inst->effAddrValid() && !(iewStage->checkProtectiveBuffForAddr(inst->getEffAddr(), tid))){
 
                         iewStage->pushAddrOnProtectiveBuff(inst->getEffAddr(),tid);
-                        std::cout << inst->getEffAddr()<< std::endl;
+                       
                     }
                 }
                 }
@@ -625,7 +625,7 @@ Commit::tick()
                  while(rob->speculativeLoads[tid].size()!= 0){
                     rob->speculativeLoads[tid].pop_back();
                 }
-                std::cout << "Squash complete" << std::endl;
+                
             } else {
                 DPRINTF(Commit,"[tid:%i] Still Squashing, cannot commit any"
                         " insts this cycle.\n", tid);
@@ -821,7 +821,7 @@ Commit::commit()
             fromIEW->squashedSeqNum[tid] <= youngestSeqNum[tid]) {
 
             if (fromIEW->mispredictInst[tid]) {
-                std::cout << "Branch mispredict squash" << std::endl;
+                
                 DPRINTF(Commit,
                     "[tid:%i] Squashing due to branch mispred "
                     "PC:%#x [sn:%llu]\n",
@@ -829,7 +829,7 @@ Commit::commit()
                     fromIEW->mispredictInst[tid]->pcState().instAddr(),
                     fromIEW->squashedSeqNum[tid]);
             } else {
-                 std::cout << "Squashing due to mem order" << std::endl;
+                 
                 DPRINTF(Commit,
                     "[tid:%i] Squashing due to order violation [sn:%llu]\n",
                     tid, fromIEW->squashedSeqNum[tid]);
